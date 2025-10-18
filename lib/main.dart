@@ -11,13 +11,11 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      initialRoute: Pickplayerscreen.routname,
+      initialRoute: XoGameBord.routname,
       routes:{
         XoGameBord.routname : (_) => XoGameBord(),
         Pickplayerscreen.routname : (_) => Pickplayerscreen()
       } 
-        
-
     );
   }
 }
