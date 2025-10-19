@@ -11,7 +11,7 @@ class Xobutton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     Widget image;
-    if (symbol == "x" || symbol == "0") {
+    if (symbol == "x" || symbol == "o") {
       image = Image.asset(symbol == "x" ? Xoassets.iconX : Xoassets.iconO);
     } else {
       image = SizedBox(

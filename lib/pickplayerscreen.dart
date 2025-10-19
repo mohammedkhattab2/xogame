@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:xogame/xo_game_bord.dart';
 import 'package:xogame/xo_styles.dart';
 
 class Pickplayerscreen extends StatelessWidget {
@@ -22,47 +23,59 @@ class Pickplayerscreen extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.stretch,
             spacing: 24,
             children: [
-              SizedBox(height: 60,),
+              SizedBox(height: 60),
 
               Expanded(
                 child: Container(
                   width: double.infinity,
                   decoration: BoxDecoration(
-                    image: DecorationImage(image:AssetImage(Xoassets.pickplayer))
+                    image: DecorationImage(
+                      image: AssetImage(Xoassets.pickplayer),
+                    ),
                   ),
-                  child:
-                   Center(child: Text("Tix-Tac-Toe", style: xotextStyles.whight40w900,))),
+                  child: Center(
+                    child: Text(
+                      "Tix-Tac-Toe",
+                      style: xotextStyles.whight40w900,
+                    ),
+                  ),
+                ),
               ),
-              Text("Pick who goes first?",style: xotextStyles.whight24meduim, textAlign: TextAlign.center,),
+              Text(
+                "Pick who goes first?",
+                style: xotextStyles.whight24meduim,
+                textAlign: TextAlign.center,
+              ),
               Row(
                 children: [
-                  Expanded(
-                    child: Container(
-                      margin: EdgeInsets.only(bottom: 26, right: 16 ,left: 16),
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(32),
-                        color: Colors.white
-                      ),
-                      child: Image.asset(Xoassets.iconX),
-                    )
-                  ),
-                  SizedBox(width: 16,),
-                  Expanded(
-                    child: Container(
-                      margin: EdgeInsets.only(bottom: 26, right: 16 ,left: 16),
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(32),
-                        color: Colors.white
-                      ),
-                      child: Image.asset(Xoassets.iconO),
-                    )
-                  )
+                  buildSympol(context, Xoassets.iconX),
+                  SizedBox(width: 16),
+                  buildSympol(context, Xoassets.iconO),
                 ],
-              )
-              ],
+              ),
+            ],
           ),
         ),
       ),
     );
   }
+}
+
+Widget buildSympol(context, String imagePath) {
+  return Expanded(
+    child: InkWell(
+      onTap: () {
+        Navigator.pushReplacementNamed(context, XoGameBord.routname,
+        arguments: imagePath == Xoassets.iconO ? "o" : "x"  );
+      },
+      child: Container(
+        margin: EdgeInsets.only(bottom: 26, right: 16, left: 16),
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(32),
+          color: Colors.white,
+        ),
+        child: Image.asset(imagePath),
+      ),
+    ),
+  );
 }

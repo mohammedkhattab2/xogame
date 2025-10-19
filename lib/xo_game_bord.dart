@@ -14,17 +14,23 @@ class XoGameBord extends StatefulWidget {
 
 class _XoGameBordState extends State<XoGameBord> {
   late Timer timer;
+  int count = 0;
   @override
   void initState() {
     super.initState();
     timer = Timer.periodic(Duration(seconds: 1), (timer) {
-      // setState(() {});
+      setState(() {});
     });
   }
-  List <String> bord = ["", "", "", "", "", "", "", "", ""];
+
+  List<String> bord = ["", "", "", "", "", "", "", "", ""];
+  String firstPlayer = "";
+  String secondPlayer = "";
 
   @override
   Widget build(BuildContext context) {
+    firstPlayer = ModalRoute.of(context)!.settings.arguments as String;
+    secondPlayer = firstPlayer == "o" ? "x" : "o";
     return SafeArea(
       child: Container(
         decoration: BoxDecoration(
@@ -53,7 +59,7 @@ class _XoGameBordState extends State<XoGameBord> {
 
   Widget buildTimer() {
     int second = timer.tick;
-    int minute = second ~/ 60; 
+    int minute = second ~/ 60;
     return Container(
       margin: EdgeInsets.only(top: 25, left: 16, right: 16),
       padding: EdgeInsets.only(top: 19, bottom: 18, left: 135, right: 135),
@@ -62,7 +68,7 @@ class _XoGameBordState extends State<XoGameBord> {
         borderRadius: BorderRadius.circular(44),
       ),
       child: Text(
-        "${minute>=10 ? minute : "0$minute"}:${(second % 60) >= 10 ? (second % 60) : "0${(second % 60)}"}",
+        "${minute >= 10 ? minute : "0$minute"}:${(second % 60) >= 10 ? (second % 60) : "0${(second % 60)}"}",
         textAlign: TextAlign.center,
         style: xotextStyles.black32semiBold,
       ),
@@ -70,7 +76,7 @@ class _XoGameBordState extends State<XoGameBord> {
   }
 
   Widget buildPlayerTurn() => Text(
-    "Player 1’s Turn",
+    "Player ${count % 2 == 0 ? 1 : 2} Turn",
     textAlign: TextAlign.center,
     style: xotextStyles.whight36bold,
   );
@@ -90,8 +96,8 @@ class _XoGameBordState extends State<XoGameBord> {
                 child: Row(
                   children: [
                     Xobutton(symbol: bord[0], onclick: onPlayerClick, index: 0),
-                    Xobutton(symbol: bord[1],onclick: onPlayerClick, index: 1),
-                    Xobutton(symbol: bord[2],onclick: onPlayerClick, index: 2),
+                    Xobutton(symbol: bord[1], onclick: onPlayerClick, index: 1),
+                    Xobutton(symbol: bord[2], onclick: onPlayerClick, index: 2),
                   ],
                 ),
               ),
@@ -153,10 +159,75 @@ class _XoGameBordState extends State<XoGameBord> {
       ),
     ),
   );
-void onPlayerClick (int index){
-  bord[index] = "x";
-  setState(() {
-    
-  });
-}
+  void onPlayerClick(int index) {
+    if (bord[index].isNotEmpty) return;
+    String symbol = count % 2 == 0 ? firstPlayer : secondPlayer;
+    bord[index] = symbol;
+    if (chickWinner()) {
+      timer.cancel();
+      showWinarDialog("player ${count % 2 == 0 ? 1 : 2} winer");
+      restBord();
+      return;
+    }
+    if (count == 8) {
+      timer.cancel();
+      showWinarDialog("draw");
+      restBord();
+      return;
+    }
+    count++;
+    setState(() {});
+  }
+
+  bool chickWinner() {
+    String symbol = count % 2 == 0 ? "o" : "x";
+    // check rows
+    if (bord[0] == symbol && bord[1] == symbol && bord[2] == symbol)
+      return true;
+    if (bord[3] == symbol && bord[4] == symbol && bord[5] == symbol)
+      return true;
+    if (bord[6] == symbol && bord[7] == symbol && bord[8] == symbol)
+      return true;
+    // check columns
+    if (bord[0] == symbol && bord[3] == symbol && bord[6] == symbol)
+      return true;
+    if (bord[1] == symbol && bord[4] == symbol && bord[7] == symbol)
+      return true;
+    if (bord[2] == symbol && bord[5] == symbol && bord[8] == symbol)
+      return true;
+    // check diagonals
+    if (bord[0] == symbol && bord[4] == symbol && bord[8] == symbol)
+      return true;
+    if (bord[2] == symbol && bord[4] == symbol && bord[6] == symbol)
+      return true;
+    return false;
+  }
+
+  showWinarDialog(String messege) {
+    showDialog(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          content: Text(messege),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.pop(context);
+              },
+              child: Text("ok"),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  void restBord() {
+    bord = ["", "", "", "", "", "", "", "", ""];
+    count = 0;
+    setState(() {});
+    timer = Timer.periodic(Duration(seconds: 1), (timer) {
+      setState(() {});
+    });
+  }
 }
